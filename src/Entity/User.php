@@ -32,6 +32,11 @@ use Symfony\Component\Serializer\Attribute\Groups;
             input: FullNameDto::class,
             name: 'fullName'
         ),
+        new Post(
+            uriTemplate: 'users/auth',
+            denormalizationContext: ['groups' => ['user:auth']],
+            name: 'auth'
+        ),
         new Get(),
         new Put(),
         new Delete()
@@ -39,7 +44,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']]
 )]
-class User implements PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -82,5 +87,20 @@ class User implements PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_USER'];
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return  $this->getEmail();
     }
 }
