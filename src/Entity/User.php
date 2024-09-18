@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Component\User\FullNameDto;
 use App\Controller\UserCreateAction;
+use App\Controller\UserFullNameAction;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -23,6 +25,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
           uriTemplate: 'users/my',
           controller: UserCreateAction::class,
           name: 'createUser'
+        ),
+        new Post(
+            uriTemplate: 'users/full-name',
+            controller: UserFullNameAction::class,
+            input: FullNameDto::class,
+            name: 'fullName'
         ),
         new Get(),
         new Put(),
