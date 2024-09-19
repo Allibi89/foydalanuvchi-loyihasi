@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Put;
 use App\Component\User\FullNameDto;
 use App\Controller\UserCreateAction;
 use App\Controller\UserFullNameAction;
+use App\Controller\UserGetMaxAgeAction;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -22,9 +23,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new GetCollection(),
         new Post(
-          uriTemplate: 'users/my',
-          controller: UserCreateAction::class,
-          name: 'createUser'
+            uriTemplate: 'users/create',
+            controller: UserCreateAction::class,
+            name: 'createUser'
         ),
         new Post(
             uriTemplate: 'users/full-name',
@@ -36,6 +37,11 @@ use Symfony\Component\Serializer\Attribute\Groups;
             uriTemplate: 'users/auth',
             denormalizationContext: ['groups' => ['user:auth']],
             name: 'auth'
+        ),
+        new GetCollection(
+            uriTemplate: 'users/max-age',
+            controller: UserGetMaxAgeAction::class,
+            name: 'maxAge'
         ),
         new Get(),
         new Put(),
@@ -60,21 +66,13 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups(['user:write'])]
     private ?string $password = null;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:read', 'user:write'])]
+    private ?int $age = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
     }
 
     public function getPassword(): ?string
@@ -101,6 +99,30 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getUserIdentifier(): string
     {
-        return  $this->getEmail();
+        return $this->getEmail();
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(?int $age): static
+    {
+        $this->age = $age;
+
+        return $this;
     }
 }

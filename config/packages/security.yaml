@@ -17,7 +17,7 @@ security:
             security: false
 
         user_create:
-            pattern: ^/api/users/my
+            pattern: ^/api/users/create
             methods:
                 - post
             security: false

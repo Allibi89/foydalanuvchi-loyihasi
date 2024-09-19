@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,6 +18,21 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function findMaxAge(): int
+    {
+        $result = $this->createQueryBuilder('u')
+            ->select('max(u.age)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($result === null) {
+            return 0;
+        }
+        return (int)$result;
+    }
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
